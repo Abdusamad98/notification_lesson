@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.notification_lesson">
    <application
-        android:label="notification_lesson"
+        android:label="Notification Lesson"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

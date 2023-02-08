@@ -4,7 +4,6 @@ import 'package:notification_lesson/my_home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  LocalNotificationService.localNotificationService.init();
   runApp(MyApp());
 }
 
@@ -13,6 +12,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+    LocalNotificationService.localNotificationService.init(navigatorKey);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(),
+      navigatorKey: navigatorKey,
     );
   }
 }

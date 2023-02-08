@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:notification_lesson/new_screen.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -16,7 +18,7 @@ class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  void init() {
+  void init(GlobalKey<NavigatorState> navigatorKey) {
     // Android
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("app_icon");
@@ -36,34 +38,38 @@ class LocalNotificationService {
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       // onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+      onDidReceiveNotificationResponse: (
+        NotificationResponse notificationResponse,
+      ) {
+        //Android
+        if (notificationResponse.payload != null) {
+          Navigator.push(navigatorKey.currentContext!,
+              MaterialPageRoute(builder: (context) {
+            return NewScreen();
+          }));
+
+          debugPrint('PAYLOAD RESULT------> ${notificationResponse.payload}');
+        } else {
+          print("PAYLOAD RESULT NULL");
+        }
+      },
     );
 
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestPermission();
-
     tz.initializeTimeZones();
   }
 
   @pragma('vm:entry-point')
   void notificationTapBackground(NotificationResponse notificationResponse) {
-    // handle action
+    print("TAPPED FROM BACKGROUND");
   }
 
 // Android
-  void onDidReceiveNotificationResponse(
-    NotificationResponse notificationResponse,
-  ) async {
-    final String? payload = notificationResponse.payload;
-    if (notificationResponse.payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-  }
 
   //IOS
-
   void onDidReceiveLocalNotification(
     int id,
     String? title,
@@ -77,16 +83,18 @@ class LocalNotificationService {
   AndroidNotificationChannel androidNotificationChannel =
       const AndroidNotificationChannel(
     "my_channel",
-    "Notification Lesson",
+    "Notification Lesson ",
     importance: Importance.max,
     description: "My Notification description",
   );
 
-  void showNotification(String data, int id) {
+  void showNotification({
+    required int id,
+  }) {
     flutterLocalNotificationsPlugin.show(
       id,
       "Ibrohim",
-      "Bugun darsga borolmayman",
+      "Bugun darsga borolmayman ID:$id",
       NotificationDetails(
         android: AndroidNotificationDetails(
           androidNotificationChannel.id,
@@ -98,16 +106,16 @@ class LocalNotificationService {
           largeIcon: const DrawableResourceAndroidBitmap('app_icon'),
         ),
       ),
-      payload: data,
+      payload: "SIMPLE NOTIFICATION DATA ID:$id",
     );
   }
 
-  void scheduleNotification(int seconds) async {
+  void scheduleNotification({required int id, required int delayedTime}) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      12,
-      "scheduleNotification",
+      id,
+      "scheduleNotification ID:$id",
       "EXAMPLE",
-      tz.TZDateTime.now(tz.local).add(Duration(seconds: seconds)),
+      tz.TZDateTime.now(tz.local).add(Duration(seconds: delayedTime)),
       NotificationDetails(
         android: AndroidNotificationDetails(
           androidNotificationChannel.id,
@@ -115,31 +123,28 @@ class LocalNotificationService {
           channelDescription: 'To remind you about upcoming birthdays',
         ),
       ),
-      payload: "Notification DATA",
+      payload: "SCHEADULED NOTIFICATION PAYLOAD DATA ID:$id",
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-
-
-
-  void showPeriodically() async {
+  void showPeriodically({required int id}) async {
     await flutterLocalNotificationsPlugin.periodicallyShow(
-      1234,
+      id,
       'repeating title',
       'repeating body',
       RepeatInterval.everyMinute,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            androidNotificationChannel.id,
-            androidNotificationChannel.name,
-            channelDescription: 'To remind you about upcoming birthdays',
-          ),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          androidNotificationChannel.id,
+          androidNotificationChannel.name,
+          channelDescription: 'To remind you about upcoming birthdays',
         ),
+      ),
       androidAllowWhileIdle: true,
-      payload: "DATA",
+      payload: "PERIODICALLY NOTIFICACYION DATA ID:$id",
     );
   }
 

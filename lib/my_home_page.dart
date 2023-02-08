@@ -9,6 +9,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int currentId = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,36 +23,39 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             TextButton(
               onPressed: () {
+                currentId++;
                 LocalNotificationService.localNotificationService
-                    .showNotification("DATA MALUMOT 1", 12);
+                    .showNotification(id: currentId);
               },
-              child: Text("Get Notifiction 1"),
+              child: Text("SIMPLE Notifiction 1"),
             ),
             TextButton(
               onPressed: () {
+                currentId++;
                 LocalNotificationService.localNotificationService
-                    .showNotification("DATA MALUMOT 2", 13);
+                    .showNotification(id: currentId);
               },
-              child: Text("Get Notifiction 2"),
+              child: Text("SIMPLE Notifiction 2"),
             ),
-
             TextButton(
               onPressed: () {
+                currentId++;
                 LocalNotificationService.localNotificationService
-                    .scheduleNotification(5);
+                    .scheduleNotification(
+                  id: currentId,
+                  delayedTime: 3,
+                );
               },
-              child: Text("scheduleNotification"),
+              child: Text("SCHUADULED NOTIFICATION "),
             ),
-
             TextButton(
               onPressed: () {
+                currentId++;
                 LocalNotificationService.localNotificationService
-                    .showPeriodically();
+                    .showPeriodically(id: currentId);
               },
-              child: Text("showPeriodically"),
+              child: Text("PERIODIC NOTIFICATION EVERY MINUT"),
             ),
-
-
             const Expanded(child: SizedBox()),
             TextButton(
                 onPressed: () {
@@ -61,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
                 onPressed: () {
                   LocalNotificationService.localNotificationService
-                      .cancelNotificationById(12);
+                      .cancelNotificationById(currentId);
                 },
                 child: const Text("Cancel Notification By id")),
           ],
