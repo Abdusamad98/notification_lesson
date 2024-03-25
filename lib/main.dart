@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -195,6 +194,7 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       initialRoute: initialRoute,
+      debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
         HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
         SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
@@ -250,9 +250,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _linuxIconPathController =
-      TextEditingController();
-
   bool _notificationsEnabled = false;
 
   @override
@@ -359,7 +356,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Local Notificationlarga mislollar'),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -894,185 +891,6 @@ class _HomePageState extends State<HomePage> {
                           'Show notification in notification centre only',
                       onPressed: () async {
                         await _showNotificationInNotificationCentreOnly();
-                      },
-                    ),
-                  ],
-                  if (!kIsWeb && Platform.isLinux) ...<Widget>[
-                    const Text(
-                      'Linux-specific examples',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    FutureBuilder<LinuxServerCapabilities>(
-                      future: getLinuxCapabilities(),
-                      builder: (
-                        BuildContext context,
-                        AsyncSnapshot<LinuxServerCapabilities> snapshot,
-                      ) {
-                        if (snapshot.hasData) {
-                          final LinuxServerCapabilities caps = snapshot.data!;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Capabilities of the current system:',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 8),
-                                _InfoValueString(
-                                  title: 'Body text:',
-                                  value: caps.body,
-                                ),
-                                _InfoValueString(
-                                  title: 'Hyperlinks in body text:',
-                                  value: caps.bodyHyperlinks,
-                                ),
-                                _InfoValueString(
-                                  title: 'Images in body:',
-                                  value: caps.bodyImages,
-                                ),
-                                _InfoValueString(
-                                  title: 'Markup in the body text:',
-                                  value: caps.bodyMarkup,
-                                ),
-                                _InfoValueString(
-                                  title: 'Animated icons:',
-                                  value: caps.iconMulti,
-                                ),
-                                _InfoValueString(
-                                  title: 'Static icons:',
-                                  value: caps.iconStatic,
-                                ),
-                                _InfoValueString(
-                                  title: 'Notification persistence:',
-                                  value: caps.persistence,
-                                ),
-                                _InfoValueString(
-                                  title: 'Sound:',
-                                  value: caps.sound,
-                                ),
-                                _InfoValueString(
-                                  title: 'Actions:',
-                                  value: caps.actions,
-                                ),
-                                _InfoValueString(
-                                  title: 'Action icons:',
-                                  value: caps.actionIcons,
-                                ),
-                                _InfoValueString(
-                                  title: 'Other capabilities:',
-                                  value: caps.otherCapabilities,
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with body markup',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithBodyMarkup();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with category',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithCategory();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with byte data icon',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithByteDataIcon();
-                      },
-                    ),
-                    Builder(
-                      builder: (BuildContext context) => PaddedElevatedButton(
-                        buttonText: 'Show notification with file path icon',
-                        onPressed: () async {
-                          final String path = _linuxIconPathController.text;
-                          if (path.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please enter the icon path'),
-                              ),
-                            );
-                            return;
-                          }
-                          await _showLinuxNotificationWithPathIcon(path);
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                      child: TextField(
-                        controller: _linuxIconPathController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter the icon path',
-                          constraints: const BoxConstraints.tightFor(
-                            width: 300,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () => _linuxIconPathController.clear(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with theme icon',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithThemeIcon();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with theme sound',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithThemeSound();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with critical urgency',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithCriticalUrgency();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with timeout',
-                      onPressed: () async {
-                        await _showLinuxNotificationWithTimeout();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Suppress notification sound',
-                      onPressed: () async {
-                        await _showLinuxNotificationSuppressSound();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Transient notification',
-                      onPressed: () async {
-                        await _showLinuxNotificationTransient();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Resident notification',
-                      onPressed: () async {
-                        await _showLinuxNotificationResident();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification on '
-                          'different screen location',
-                      onPressed: () async {
-                        await _showLinuxNotificationDifferentLocation();
                       },
                     ),
                   ],
@@ -2862,215 +2680,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-Future<void> _showLinuxNotificationWithBodyMarkup() async {
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with body markup',
-    '<b>bold text</b>\n'
-        '<i>italic text</i>\n'
-        '<u>underline text</u>\n'
-        'https://example.com\n'
-        '<a href="https://example.com">example.com</a>',
-    null,
-  );
-}
-
-Future<void> _showLinuxNotificationWithCategory() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    category: LinuxNotificationCategory.emailArrived,
-  );
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with category',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationWithByteDataIcon() async {
-  final ByteData assetIcon = await rootBundle.load(
-    'icons/app_icon_density.png',
-  );
-  final image.Image? iconData = image.decodePng(
-    assetIcon.buffer.asUint8List().toList(),
-  );
-  final Uint8List iconBytes = iconData!.getBytes();
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    icon: ByteDataLinuxIcon(
-      LinuxRawIconData(
-        data: iconBytes,
-        width: iconData.width,
-        height: iconData.height,
-        channels: 4,
-        // The icon has an alpha channel
-        hasAlpha: true,
-      ),
-    ),
-  );
-  final NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with byte data icon',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationWithPathIcon(String path) async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(icon: FilePathLinuxIcon(path));
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    'notification with file path icon',
-    null,
-    platformChannelSpecifics,
-  );
-}
-
-Future<void> _showLinuxNotificationWithThemeIcon() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    icon: ThemeLinuxIcon('media-eject'),
-  );
-  final NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with theme icon',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationWithThemeSound() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    sound: ThemeLinuxSound('message-new-email'),
-  );
-  final NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with theme sound',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationWithCriticalUrgency() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    urgency: LinuxNotificationUrgency.critical,
-  );
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with critical urgency',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationWithTimeout() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    timeout: LinuxNotificationTimeout.fromDuration(
-      const Duration(seconds: 1),
-    ),
-  );
-  final NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification with timeout',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationSuppressSound() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    suppressSound: true,
-  );
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'suppress notification sound',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationTransient() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    transient: true,
-  );
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'transient notification',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationResident() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(
-    resident: true,
-  );
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'resident notification',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<void> _showLinuxNotificationDifferentLocation() async {
-  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
-      LinuxNotificationDetails(location: LinuxNotificationLocation(10, 10));
-  const NotificationDetails notificationDetails = NotificationDetails(
-    linux: linuxPlatformChannelSpecifics,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id++,
-    'notification on different screen location',
-    null,
-    notificationDetails,
-  );
-}
-
-Future<LinuxServerCapabilities> getLinuxCapabilities() =>
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            LinuxFlutterLocalNotificationsPlugin>()!
-        .getCapabilities();
 
 class SecondPage extends StatefulWidget {
   const SecondPage(

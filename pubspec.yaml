@@ -10,7 +10,6 @@ dependencies:
 
   flutter_timezone: ^1.0.4
   http: ^0.13.4
-  image: ^3.0.8
   path_provider: ^2.0.0
   flutter_local_notifications: ^17.0.0
 
@@ -28,7 +27,6 @@ flutter:
   uses-material-design: true
   assets:
     - icons/
-    - sound/
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
