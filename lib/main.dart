@@ -30,7 +30,6 @@ final StreamController<String?> selectNotificationStream =
 const MethodChannel platform =
     MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
-const String portName = 'notification_send_port';
 
 class ReceivedNotification {
   ReceivedNotification({
@@ -163,16 +162,10 @@ Future<void> main() async {
     },
     notificationCategories: darwinNotificationCategories,
   );
-  final LinuxInitializationSettings initializationSettingsLinux =
-      LinuxInitializationSettings(
-    defaultActionName: 'Open notification',
-    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
-  );
+
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsDarwin,
-    macOS: initializationSettingsDarwin,
-    linux: initializationSettingsLinux,
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
@@ -204,9 +197,6 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  if (kIsWeb || Platform.isLinux) {
-    return;
-  }
   tz.initializeTimeZones();
   final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
